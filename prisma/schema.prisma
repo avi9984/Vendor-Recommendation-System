@@ -1,0 +1,105 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role{
+  ADMIN
+  USER
+}
+
+enum VendorStatus{
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+}
+
+enum DocumentType{
+  TAX_REGISTRATION
+  INSURANCE
+  TRADE_LICENSE
+  SAFETY_CERTIFICATE
+  AGREEMENT
+}
+
+enum Priorty{
+  LOW
+  MEDIUM
+  HIGH
+}
+
+
+model User {
+  id                String              @id @default(cuid())
+  name              String
+  email             String              @unique
+  password          String 
+  role              Role                @default(USER)
+
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+}
+
+model Vendor {
+  id                String              @id @default(cuid())
+  vendorname        String
+  vendorType        String
+  category          String
+  email             String              @unique
+  location          String
+  rating            Float               @default(0)
+  status            VendorStatus        @default(ACTIVE)
+  establishmentYear Int?
+  documents         VendorDocument[]
+  recommendations   Recommendation[]
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+
+}
+
+
+model VendorDocument {
+  id                String              @id @default(cuid())
+  vendorId          String
+  vendor            Vendor              @relation(fields:[vendorId], references:[id])
+  documentType      DocumentType
+  documentName      String
+  expiryDate        DateTime?
+  verified          Boolean              @default(false)
+  createdAt         DateTime             @default(now())
+  updatedAt         DateTime             @updatedAt
+}
+
+model WorkRequirement {
+  id                String                @id @default(cuid())
+  title             String
+  category          String
+  estimatedValue    Float
+  location          String
+  description       String?
+  priority          Priorty               
+  expectedStartDate DateTime?
+  recommendations   Recommendation[]
+  createdAt         DateTime              @default(now())
+  updatedAt         DateTime              @updatedAt
+}
+
+model Recommendation {
+  id                String                @id @default(cuid())
+  vendorId          String
+  vendor            Vendor                @relation(fields:[vendorId], references:[id])
+  workRequirementId String
+  workRequirement   WorkRequirement       @relation(fields:[workRequirementId], references:[id])
+  score             Float                 @default(0)
+  reason            String?
+  createdAt         DateTime              @default(now())
+  updatedAt         DateTime              @updatedAt
+}
