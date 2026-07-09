@@ -1,5 +1,4 @@
 export const validate = (schema) => (req, res, next) => {
-    console.log("come to here validation");
 
     const result = schema.safeParse(req.body);
     if (!result.success) {
