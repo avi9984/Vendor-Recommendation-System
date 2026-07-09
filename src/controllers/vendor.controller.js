@@ -12,8 +12,7 @@ export const createVendor = async (req, res, next) => {
             data: vendor
         }))
     } catch (error) {
-        console.log(error);
-        next()
+        next(error)
     }
 }
 
@@ -26,8 +25,7 @@ export const getVendorById = async (req, res, next) => {
             data: vendor
         }))
     } catch (error) {
-        console.log(error);
-        next()
+        next(error)
     }
 }
 
@@ -40,8 +38,7 @@ export const updateVendor = async (req, res, next) => {
             data: vendor
         }))
     } catch (error) {
-        console.log(error);
-        next()
+        next(error)
     }
 }
 
@@ -54,8 +51,7 @@ export const deleteVendor = async (req, res, next) => {
             data: vendor
         }))
     } catch (error) {
-        console.log(error);
-        next()
+        next(error)
     }
 }
 
@@ -68,7 +64,6 @@ export const getAllVendors = async (req, res, next) => {
             data: vendors
         }))
     } catch (error) {
-        console.log(error);
-        next()
+        next(error)
     }
 }
