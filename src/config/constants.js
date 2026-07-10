@@ -1,6 +1,7 @@
 export const UserRoles = {
     ADMIN: "ADMIN",
-    USER: "USER"
+    USER: "USER",
+    VENDOR: "VENDOR"
 }
 
 export const VendorStatus = {

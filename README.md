@@ -65,6 +65,7 @@ erDiagram
     }
     VENDOR {
         string id PK
+        string userId FK
         string vendorname
         string vendorType
         string category
@@ -107,14 +108,15 @@ erDiagram
         DateTime createdAt
         DateTime updatedAt
     }
+    USER ||--o| VENDOR : owns
     VENDOR ||--o{ VENDOR_DOCUMENT : has
     VENDOR ||--o{ RECOMMENDATION : receives
     WORK_REQUIREMENT ||--o{ RECOMMENDATION : generates
 ```
 
 ### Key Models
-- **`User`**: System managers with access credentials and authentication roles (`ADMIN`, `USER`).
-- **`Vendor`**: Registered service providers, filtering candidates via `category`, location, active status, ratings, and experience.
+- **`User`**: Users of the platform, including system administrators (`ADMIN`), client users (`USER`), and verified vendor owners (`VENDOR`).
+- **`Vendor`**: Registered service providers, filtering candidates via `category`, location, active status, ratings, and experience. Linked to `User` profile.
 - **`VendorDocument`**: Compliance documents (TAX_REGISTRATION, INSURANCE, etc.) checked during matching to verify status and expiry.
 - **`WorkRequirement`**: Specific client projects/jobs requiring matching.
 - **`Recommendation`**: Links vendors to work requirements with scored ratings and summary results.
@@ -131,10 +133,11 @@ All endpoints are prefix-routed under `/api/v1/` and require valid JWT headers u
 | `/api/v1/auth/login` | `POST` | Public | Authenticates and returns a JWT |
 | `/api/v1/vendor` | `POST` | Admin Only | Adds a new vendor to the platform |
 | `/api/v1/vendor` | `GET` | Authenticated | Lists all vendors (supports pagination) |
-| `/api/v1/vendor/:id` | `GET` / `PUT` | Authenticated | Views or updates vendor details |
+| `/api/v1/vendor/:id` | `GET` | Authenticated | Views vendor details |
+| `/api/v1/vendor/:id` | `PUT` | Admin or Vendor Owner | Updates vendor details |
 | `/api/v1/vendor/:id` | `DELETE` | Admin Only | Deletes a vendor |
-| `/api/v1/vendorDocument` | `POST` / `PUT` | Authenticated | Uploads or updates compliance documents |
-| `/api/v1/vendorDocument/expired` | `GET` | Authenticated | Fetches all expired compliance files |
+| `/api/v1/vendorDocument` | `POST` / `PUT` | Admin or Vendor Owner | Uploads or updates compliance documents |
+| `/api/v1/vendorDocument/expired` | `GET` | Admin Only | Fetches all expired compliance files |
 | `/api/v1/workRequirement` | `POST` / `GET` | Authenticated | CRUD operations for project postings |
 | `/api/v1/workRequirement/:id/recommendations` | `GET` | Authenticated | **Matching Engine**: Generates ranked scores and LLM recommendations |
 
