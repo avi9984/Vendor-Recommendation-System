@@ -5,6 +5,7 @@ import { generateRecommendationSummary } from "../services/ai.service.js";
 
 export const createWorkRequirement = async (req, res, next) => {
     try {
+        console.log("req.body", req.body);
         const workRequirement = await workRequirementService.createWorkRequirement(req.body);
         res.status(201).json(ApiResponce({
             statusCode: 201,
@@ -75,9 +76,11 @@ export const getAllWorkRequirements = async (req, res, next) => {
 export const getRecommendedVendor = async (req, res, next) => {
     try {
         const workRequirement = await workRequirementService.getWorkRequirementById(req.params.id);
+        // console.log("workRequirement", workRequirement);
         const recommendedVendors = await recommendationService.recommendVendors(req.params.id);
+        // console.log("recommendedVendors", recommendedVendors);
         const aiSummary = await generateRecommendationSummary(workRequirement, recommendedVendors);
-        
+
         res.status(200).json(ApiResponce({
             statusCode: 200,
             message: "Recommendations and AI summary generated successfully",
