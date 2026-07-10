@@ -2,13 +2,16 @@ import prisma from "../config/prisma.js";
 import ApiError from "../utils/ApiErros.js";
 
 export const createDocument = async (vendorId, payload) => {
-    const vendor = await prisma.vendor.findUnique({
+    const vendor = await prisma.vendor.findFirst({
         where: {
-            id: vendorId
+            OR: [
+                { id: vendorId },
+                { userId: vendorId }
+            ]
         }
     });
     if (!vendor) {
-        throw new ApiError(404, "Vendor not found");
+        throw ApiError(404, "Vendor not found");
     }
     const document = await prisma.vendorDocument.create({
         data: {
@@ -23,17 +26,24 @@ export const createDocument = async (vendorId, payload) => {
 }
 
 export const getVendorDocumentsByVendorId = async (vendorId) => {
-    const vendor = await prisma.vendor.findUnique({
+
+
+    const vendor = await prisma.vendor.findFirst({
         where: {
-            id: vendorId
+            OR: [
+                { id: vendorId },
+                { userId: vendorId }
+            ]
         }
     });
+    // console.log("vendor 1", vendor);
+    // console.log("vendorId 1", vendorId);
     if (!vendor) {
-        throw new ApiError(404, "Vendor not found");
+        throw ApiError(404, "Vendor not found");
     }
     return await prisma.vendorDocument.findMany({
         where: {
-            vendorId: vendorId
+            vendorId: vendor.id
         },
         orderBy: { createdAt: "desc" }
     });
@@ -44,7 +54,7 @@ export const updateDocument = async (id, payload) => {
         where: { id }
     });
     if (!documentExists) {
-        throw new ApiError(404, "Document not found");
+        throw ApiError(404, "Document not found");
     }
 
     const data = { ...payload };
@@ -64,7 +74,7 @@ export const deleteDocument = async (id) => {
         where: { id }
     });
     if (!documentExists) {
-        throw new ApiError(404, "Document not found");
+        throw ApiError(404, "Document not found");
     }
     return await prisma.vendorDocument.delete({
         where: { id }
