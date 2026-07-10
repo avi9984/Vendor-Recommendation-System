@@ -39,7 +39,7 @@ export const recommendVendors = async (workRequirementId) => {
         }
     });
     if (!work) {
-        throw new ApiError(404, "Work not found");
+        throw ApiError(404, "Work not found");
     }
 
     const vendors = await prisma.vendor.findMany({

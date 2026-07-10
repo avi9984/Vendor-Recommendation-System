@@ -9,7 +9,7 @@ const generateFallbackSummary = (work, recommendations) => {
     const categoryMatchText = topVendor.category.toLowerCase().trim() === work.category.toLowerCase().trim()
         ? `matches the category '${work.category}'`
         : `does not match the category '${work.category}'`;
-    
+
     const docText = topVendor.totalDocuments > 0 && topVendor.verifiedDocuments === topVendor.totalDocuments
         ? `has all ${topVendor.totalDocuments} compliance documents verified and active`
         : `has ${topVendor.verifiedDocuments} of ${topVendor.totalDocuments} compliance documents verified`;
@@ -44,7 +44,7 @@ export const generateRecommendationSummary = async (work, recommendations) => {
 
     try {
         const genAI = new GoogleGenerativeAI(apiKey);
-        const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+        const model = genAI.getGenerativeModel({ model: "gemini-3.5-flash" });
 
         const prompt = `
 You are an expert procurement and operations advisor. 
