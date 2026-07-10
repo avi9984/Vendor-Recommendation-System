@@ -18,7 +18,7 @@ export const createDocument = async (req, res, next) => {
 
 export const getDocument = async (req, res, next) => {
     try {
-        const vendorId = req.query.vendorId;
+        const vendorId = req.params.vendorId;
         const documents = await vendorDocumentService.getVendorDocumentsByVendorId(vendorId);
         res.status(200).json(ApiResponce({
             statusCode: 200,
@@ -33,7 +33,7 @@ export const getDocument = async (req, res, next) => {
 
 export const updateDocument = async (req, res, next) => {
     try {
-        const id = req.params.id || req.body.id;
+        const id = req.params.id;
         const payload = req.body;
         const document = await vendorDocumentService.updateDocument(id, payload);
         res.status(200).json(ApiResponce({
