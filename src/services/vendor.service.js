@@ -8,14 +8,40 @@ export const createVendor=async(payload)=>{
     if(vendor){
         throw ApiError(409, "Vendor already exists");
     }
+
+    // Check if a User account with the vendor's email already exists
+    const existingUser = await prisma.user.findUnique({
+        where: { email: payload.email }
+    });
+
+    let userId = null;
+    if (existingUser) {
+        userId = existingUser.id;
+        // Promote the user to VENDOR if they are currently a USER
+        if (existingUser.role === "USER") {
+            await prisma.user.update({
+                where: { id: existingUser.id },
+                data: { role: "VENDOR" }
+            });
+        }
+    }
+
     return prisma.vendor.create({
-        data:payload
+        data: {
+            ...payload,
+            userId
+        }
     }) 
 }
 
 export const getVendorById=async(id)=>{
-    const vendor=await prisma.vendor.findUnique({
-        where:{id}
+    const vendor=await prisma.vendor.findFirst({
+        where:{
+            OR: [
+                { id },
+                { userId: id }
+            ]
+        }
     });
     if(!vendor){
         throw ApiError(404, "Vendor not found")
@@ -24,17 +50,17 @@ export const getVendorById=async(id)=>{
 }
 
 export const updateVendor=async(id,payload)=>{
-    await getVendorById(id);
+    const vendor = await getVendorById(id);
     return prisma.vendor.update({
-        where:{id},
+        where:{id: vendor.id},
         data:payload
     });
 }
 
 export const deleteVendor=async(id)=>{
-    await getVendorById(id);
+    const vendor = await getVendorById(id);
     return prisma.vendor.update({
-        where:{id},
+        where:{id: vendor.id},
         data:{status:"INACTIVE"}
     })
 }
