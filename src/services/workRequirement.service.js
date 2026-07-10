@@ -16,7 +16,7 @@ export const getWorkRequirementById = async (id) => {
         where: { id }
     });
     if (!workRequirement) {
-        throw new ApiError(404, "Work Requirement not found");
+        throw ApiError(404, "Work Requirement not found");
     }
     return workRequirement;
 }
