@@ -9,12 +9,12 @@ export const createDocument = async (req, res, next) => {
             statusCode: 201,
             message: "Document created successfully",
             data: document
-        }))
+        }));
     } catch (error) {
         console.log(error);
-        next(error)
+        next(error);
     }
-}
+};
 
 export const getDocument = async (req, res, next) => {
     try {
@@ -24,12 +24,12 @@ export const getDocument = async (req, res, next) => {
             statusCode: 200,
             message: "Documents fetched successfully",
             data: documents
-        }))
+        }));
     } catch (error) {
         console.log(error);
-        next(error)
+        next(error);
     }
-}
+};
 
 export const updateDocument = async (req, res, next) => {
     try {
@@ -40,27 +40,27 @@ export const updateDocument = async (req, res, next) => {
             statusCode: 200,
             message: "Document updated successfully",
             data: document
-        }))
+        }));
     } catch (error) {
         console.log(error);
-        next(error)
+        next(error);
     }
-}
+};
 
 export const deleteDocument = async (req, res, next) => {
     try {
-        const id = req.params.id
+        const id = req.params.id;
         const document = await vendorDocumentService.deleteDocument(id);
         res.status(200).json(ApiResponce({
             statusCode: 200,
             message: "Document deleted successfully",
             data: document
-        }))
+        }));
     } catch (error) {
         console.log(error);
-        next(error)
+        next(error);
     }
-}
+};
 
 export const getExpiredDocuments = async (req, res, next) => {
     try {
@@ -69,9 +69,28 @@ export const getExpiredDocuments = async (req, res, next) => {
             statusCode: 200,
             message: "Expired documents fetched successfully",
             data: documents
-        }))
+        }));
     } catch (error) {
         console.log(error);
-        next(error)
+        next(error);
     }
-}
+};
+
+export const getExpiringSoonDocuments = async (req, res, next) => {
+    try {
+        const days = req.query.days ? parseInt(req.query.days, 10) : 30;
+        const documents = await vendorDocumentService.getExpiringSoonDocuments(days);
+        res.status(200).json(ApiResponce({
+            statusCode: 200,
+            message: "Expiring documents fetched successfully",
+            data: {
+                daysThreshold: days,
+                count: documents.length,
+                documents
+            }
+        }));
+    } catch (error) {
+        console.log(error);
+        next(error);
+    }
+};
