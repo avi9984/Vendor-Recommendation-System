@@ -1,24 +1,25 @@
 import ApiResponce from "../utils/ApiResponce.js";
-
 import { generateToken } from "../utils/jwt.js";
 import * as authService from "../services/auth.service.js";
 
-
 export const register = async (req, res, next) => {
-
     try {
-
-        await authService.register(req.body);
+        const newUser = await authService.register(req.body);
 
         res.status(201).json(ApiResponce({
             statusCode: 201,
-            message: "User Registed successfully",
-        }))
+            message: "User registered successfully",
+            data: {
+                id: newUser.id,
+                name: newUser.name,
+                email: newUser.email,
+                role: newUser.role
+            }
+        }));
     } catch (error) {
-        // console.error(error)
-        next(error)
+        next(error);
     }
-}
+};
 
 export const login = async (req, res, next) => {
     try {
@@ -31,11 +32,18 @@ export const login = async (req, res, next) => {
 
         res.status(200).json(ApiResponce({
             statusCode: 200,
-            message: "User Registed successfully",
-            data: { token }
-        }))
+            message: "User logged in successfully",
+            data: {
+                token,
+                user: {
+                    id: user.id,
+                    name: user.name,
+                    email: user.email,
+                    role: user.role
+                }
+            }
+        }));
     } catch (error) {
-        // console.error(error)
-        next(error)
+        next(error);
     }
-}
+};
