@@ -76,15 +76,21 @@ export const getAllWorkRequirements = async (req, res, next) => {
 export const getRecommendedVendor = async (req, res, next) => {
     try {
         const workRequirement = await workRequirementService.getWorkRequirementById(req.params.id);
-        // console.log("workRequirement", workRequirement);
-        const recommendedVendors = await recommendationService.recommendVendors(req.params.id);
-        // console.log("recommendedVendors", recommendedVendors);
+        const limit = req.query.limit ? parseInt(req.query.limit, 10) : 10;
+        const minScore = req.query.minScore ? parseFloat(req.query.minScore) : 0;
+
+        const recommendedVendors = await recommendationService.recommendVendors(workRequirement, {
+            limit: isNaN(limit) ? 10 : limit,
+            minScore: isNaN(minScore) ? 0 : minScore
+        });
+
         const aiSummary = await generateRecommendationSummary(workRequirement, recommendedVendors);
 
         res.status(200).json(ApiResponce({
             statusCode: 200,
             message: "Recommendations and AI summary generated successfully",
             data: {
+                totalMatched: recommendedVendors.length,
                 recommendations: recommendedVendors,
                 aiSummary
             }
