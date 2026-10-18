@@ -43,8 +43,8 @@ export const generateRecommendationSummary = async (work, recommendations) => {
     }
 
     try {
-        const genAI = new GoogleGenerativeAI(apiKey);
-        const model = genAI.getGenerativeModel({ model: "gemini-3.5-flash" });
+        const modelName = process.env.GEMINI_MODEL || "gemini-2.5-flash";
+        const model = genAI.getGenerativeModel({ model: modelName });
 
         const prompt = `
 You are an expert procurement and operations advisor. 
