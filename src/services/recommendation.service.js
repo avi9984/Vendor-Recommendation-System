@@ -2,7 +2,7 @@ import prisma from "../config/prisma.js";
 import ApiError from "../utils/ApiErros.js";
 
 // Helper function to calculate distance in km between two locations
-const getDistance = (loc1, loc2) => {
+export const getDistance = (loc1, loc2) => {
     if (!loc1 || !loc2) return 999;
     if (loc1.toLowerCase().trim() === loc2.toLowerCase().trim()) return 0;
     

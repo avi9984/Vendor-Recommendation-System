@@ -91,3 +91,38 @@ export const getExpiredDocuments = async () => {
         orderBy: { expiryDate: "asc" }
     });
 }
+
+export const getExpiringSoonDocuments = async (daysAhead = 30) => {
+    const days = Math.max(1, parseInt(daysAhead, 10) || 30);
+    const now = new Date();
+    const thresholdDate = new Date();
+    thresholdDate.setDate(thresholdDate.getDate() + days);
+
+    const documents = await prisma.vendorDocument.findMany({
+        where: {
+            expiryDate: {
+                gte: now,
+                lte: thresholdDate
+            }
+        },
+        include: {
+            vendor: {
+                select: {
+                    id: true,
+                    vendorname: true,
+                    email: true
+                }
+            }
+        },
+        orderBy: { expiryDate: "asc" }
+    });
+
+    return documents.map(doc => {
+        const diffMs = new Date(doc.expiryDate).getTime() - now.getTime();
+        const daysRemaining = Math.max(0, Math.ceil(diffMs / (1000 * 60 * 60 * 24)));
+        return {
+            ...doc,
+            daysRemaining
+        };
+    });
+}
